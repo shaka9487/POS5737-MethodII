@@ -1,0 +1,97 @@
+---
+title: "Problem Set 1"
+course: "POS 5737"
+author: "Shaka Y.J. Li"
+date: "2024-08-28"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+###Load the data we need
+library(tidyverse)
+library(dplyr)
+```
+
+
+```{r}
+###Load the data
+data <- read_csv("/Users/shakali/FSU work/POS5737/MethodsII/kdrama.csv")
+```
+```{r}
+###Q1
+nrow(data)
+```
+```{r}
+###Q2
+colnames(data)
+```
+```{r}
+###Q3
+sum(is.na(data$`Number of Episodes`))###Checking if there are any missing values
+mean(data$`Number of Episodes`)###Claculate the mean
+```
+```{r}
+###Q4
+hist(data$Rating)
+```
+```{r}
+###Q5
+data_over9 <- ###Subset the rating value whose value is larger than 9
+  data %>% 
+  group_by(Name) %>% 
+  subset(Rating > 9 )
+
+nrow(data_over9) ###Calculate how many of them
+```
+```{r}
+###Q6
+data <- data %>% 
+  rename("Year" = "Year of release", ###Rename the original one to simply Year
+         "original_network" = "Original Network") ###Rename the variable I need
+```
+
+```{r}
+###Q7
+data_2020_2022 <- data %>% ###Subset the data from 2020 to 2022 first
+  filter(Year %in% c(2020:2022)) %>% 
+  group_by(Name) %>% 
+  arrange(Year)
+
+nrow(data_2020_2022) ###Calculate the amount of the dataset
+```
+```{r}
+###Q8
+class(data$Duration)
+```
+```{r}
+###Q9
+data <- data %>%
+  mutate(duration_min = gsub("hr.", "*60 +", Duration) %>% #Create a new column called minutes and multiple 60
+                    gsub("min.", "", .) %>% #delete "minutes" and add with previous results
+                    gsub("^\\s+", "", .) %>% # removing any remaining leading space in the string      
+                    sapply(function(x) eval(parse(text = x))) %>% #converting to numeric
+                    unlist())
+hist(data$duration_min) ###create histogram
+```
+```{r}
+###Q10
+data_netflix <- data %>% filter(str_detect(original_network, "Netflix"))
+```
+
+
+
+```{r}
+###Q11
+mean(data_netflix$Rating)
+```
+
+
+
+
+
+
+
